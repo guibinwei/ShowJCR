@@ -1,11 +1,18 @@
 #include "showjcr.h"
-#include "./ui_showjcr.h"
+#include "ui_showjcr.h"
 #include <QMessageBox>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QCompleter>
 #include <QMimeData>
 #include <QMenu>
+#include <QFont>
+#include <QDir>
+#include <QSystemTrayIcon>
+#include <QCloseEvent>
+#include <QHeaderView>
+#include <QDebug>
+#include <QApplication>
 
 const QString ShowJCR::author = "hitfyd";
 const QString ShowJCR::version = "v2024-1.1";
@@ -22,6 +29,7 @@ ShowJCR::ShowJCR(QWidget *parent)
     , ui(new Ui::ShowJCR)
 {
     ui->setupUi(this);
+    
     this->setWindowTitle(windowTitile);
 
     //获取程序运行信息

@@ -1,5 +1,7 @@
 #ifndef SQLITEDB_H
 #define SQLITEDB_H
+#include <QDebug>
+#include <QSqlError>
 
 #include <QObject>
 #include <QDir>

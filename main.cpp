@@ -7,6 +7,11 @@
 #include <QDateTime>
 #include <QFile>
 #include <QDir>
+#include <QTextStream>  // Add this for QTextStream
+#include <QDebug>       // Add this for qDebug() and qWarning()
+#include <QFile>        // Add this for QFile
+
+
 
 void outputMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
  {

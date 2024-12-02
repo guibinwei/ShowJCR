@@ -1,4 +1,6 @@
 #include "sqlitedb.h"
+#include <QDebug>
+#include <QSqlError>
 
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
