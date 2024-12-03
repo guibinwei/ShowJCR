@@ -1,4 +1,4 @@
-#include "showjcr.h"
+﻿#include "showjcr.h"
 
 #include <QApplication>
 #include <QSharedMemory>

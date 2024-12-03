@@ -1,4 +1,4 @@
-#ifndef SHOWJCR_H
+﻿#ifndef SHOWJCR_H
 #define SHOWJCR_H
 
 #include "sqlitedb.h"
@@ -51,7 +51,7 @@ private slots:
 
 private:
     //系统提示语
-    const QString cueWords[2] = {"请输入期刊名称！", "请检查期刊名称！"};
+    const QString cueWords[2] = {u8"请输入期刊名称！", u8"请检查期刊名称！"};
     //软件常量，包括作者信息、资源文件路径等
     static const QString author;
     static const QString version;

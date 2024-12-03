@@ -1,4 +1,4 @@
-#include "sqlitedb.h"
+﻿#include "sqlitedb.h"
 #include <QDebug>
 #include <QSqlError>
 
@@ -9,19 +9,37 @@
 
 SqliteDB::SqliteDB(const QDir &appDir, const QString &datasetName, QObject *parent) : QObject(parent)
 {
-    //连接SQLite3数据库"jcr.db"，该数据集应放在运行目录下
-    database = QSqlDatabase::addDatabase("QSQLITE");
-    database.setDatabaseName(appDir.absoluteFilePath(datasetName));
-    database.setConnectOptions("QSQLITE_OPEN_READONLY");//设置连接属性：当数据库不存在时不自动创建
-//    qDebug() << database;
-    if (!database.open())
-    {
-        qWarning() << "Error: Failed to connect database." << __FUNCTION__ << database.lastError();
-        QMessageBox::warning(QApplication::activeWindow(), "期刊信息数据库缺失！", database.lastError().text());
+    // First try to find the database in the executable directory
+    QString dbPath = appDir.absoluteFilePath(datasetName);
+    qDebug() << "Checking database path:" << dbPath;
+    
+    // If not found, try the Original_Data folder two levels up
+    if (!QFile::exists(dbPath)) {
+        QDir originalDataDir = appDir;
+        // Go up two levels (from build/Release to project root)
+        if (originalDataDir.cdUp() && originalDataDir.cdUp()) {
+            // Then try to find Original_Data folder
+            QString originalDataPath = originalDataDir.absoluteFilePath("Original_Data/" + datasetName);
+            if (QFile::exists(originalDataPath)) {
+                dbPath = originalDataPath;
+            }
+            qDebug() << "Checking Original_Data path:" << dbPath;
+        }
     }
-    else
-    {
-        qDebug() << "Successed to connect database.";
+
+    database = QSqlDatabase::addDatabase("QSQLITE");
+    database.setDatabaseName(dbPath);
+    database.setConnectOptions("QSQLITE_OPEN_READONLY");
+
+    if (!database.open()) {
+        qWarning() << "Error: Failed to connect database." << __FUNCTION__ << database.lastError();
+        QString errorMsg = QString(u8"期刊信息数据库缺失！\n请确保以下路径存在数据库文件：\n1. %1\n2. %2")
+            .arg(appDir.absoluteFilePath(datasetName))
+            .arg(QDir(appDir).cdUp() && QDir(appDir).cdUp() ? 
+                QDir(appDir).absoluteFilePath("../../Original_Data/" + datasetName) : "");
+        QMessageBox::warning(QApplication::activeWindow(), u8"数据库错误", errorMsg);
+    } else {
+        qDebug() << "Successfully connected to database at:" << dbPath;
     }
 
     selectTableNames();
@@ -78,7 +96,7 @@ QList<Pair> SqliteDB::getJournalInfo(const QString &journalName, bool allowSelec
         }
     }
     //查询输入不是期刊全称时，自动进行二次查询，显示完整信息;allowSelectAgain避免进入死循环
-    if(allowSelectAgain and journalInfo.size() > 0 and journalInfo[0].first != defaultPrimaryKeyValue){
+    if(allowSelectAgain && journalInfo.size() > 0 && journalInfo[0].first != defaultPrimaryKeyValue){
         foreach(const Pair &info, journalInfo){
             if(info.first == defaultPrimaryKeyValue){
                 journalInfo = getJournalInfo(info.second, false);

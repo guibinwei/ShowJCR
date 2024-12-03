@@ -1,11 +1,9 @@
-#include "aboutdialog.h"
+﻿#include "aboutdialog.h"
 #include "ui_aboutdialog.h"
 #include <QDesktopServices>
 #include <QUrl>
 
-AboutDialog::AboutDialog(const QString &appName, const QString &version, const QString &email, const QString &codeURL, const QString &updateURL, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::AboutDialog)
+AboutDialog::AboutDialog(const QString &appName, const QString &version, const QString &email, const QString &codeURL, const QString &updateURL, QWidget *parent) : QDialog(parent), ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
 
@@ -17,7 +15,8 @@ AboutDialog::AboutDialog(const QString &appName, const QString &version, const Q
 
     this->setWindowFlags(this->windowFlags()&~Qt::WindowMinMaxButtonsHint);
     this->setWindowTitle(appName);
-    ui->label_version->setText(appName + ", " + version + "版");
+    QString versionText = appName + QStringLiteral(", ") + version + QStringLiteral("版");
+    ui->label_version->setText(versionText);
     ui->pushButton_email->setToolTip(email);
     ui->pushButton_code->setToolTip(codeURL);
     ui->pushButton_update->setToolTip(updateURL);

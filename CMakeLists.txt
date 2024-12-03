@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(ShowJCR VERSION 0.1 LANGUAGES CXX)
 
@@ -38,13 +38,19 @@ set(PROJECT_SOURCES
     aboutdialog.cpp
     aboutdialog.h
     aboutdialog.ui
-    resources.qrc
+    resources/resources.qrc
 )
 
 # Create the executable
-add_executable(ShowJCR
-    ${PROJECT_SOURCES}
-)
+if(WIN32)
+    add_executable(ShowJCR WIN32  # Add WIN32 here to specify Windows GUI application
+        ${PROJECT_SOURCES}
+    )
+else()
+    add_executable(ShowJCR
+        ${PROJECT_SOURCES}
+    )
+endif()
 
 # Link against the Qt libraries
 target_link_libraries(ShowJCR PRIVATE

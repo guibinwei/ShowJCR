@@ -1,4 +1,4 @@
-#ifndef SQLITEDB_H
+﻿#ifndef SQLITEDB_H
 #define SQLITEDB_H
 #include <QDebug>
 #include <QSqlError>

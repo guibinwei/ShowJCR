@@ -1,4 +1,4 @@
-#include "showjcr.h"
+﻿#include "showjcr.h"
 #include "ui_showjcr.h"
 #include <QMessageBox>
 #include <QStandardItemModel>
@@ -19,7 +19,7 @@ const QString ShowJCR::version = "v2024-1.1";
 const QString ShowJCR::email = "hitfyd@foxmail.com";
 const QString ShowJCR::codeURL = "https://github.com/hitfyd/ShowJCR";
 const QString ShowJCR::updateURL = "https://github.com/hitfyd/ShowJCR/releases";
-const QString ShowJCR::windowTitile = tr("中科院分区表升级版2024");
+const QString ShowJCR::windowTitile = u8"中科院分区表升级版2024";
 const QString ShowJCR::logoIconName = ":/image/jcr-logo.jpg";
 const QString ShowJCR::datasetName = "jcr.db";  //数据集暂时无法使用资源文件；在程序自启动时，程序的运行目录是C:/WINDOWS/system32而不是程序目录，因此需要结合QApplication::applicationFilePath()修改
 const QString ShowJCR::defaultJournal = "National Science Review";
@@ -30,6 +30,25 @@ ShowJCR::ShowJCR(QWidget *parent)
 {
     ui->setupUi(this);
     
+    // Set application-wide default font
+    QFont defaultFont = QApplication::font();
+    defaultFont.setPointSize(14);  // Increase base font size
+    defaultFont.setBold(false);    // Ensure no bold
+    QApplication::setFont(defaultFont);
+
+    // Set specific font for the table view
+    QFont tableFont = ui->tableView_journalInformation->font();
+    tableFont.setPointSize(14);
+    tableFont.setBold(false);
+    ui->tableView_journalInformation->setFont(tableFont);
+
+    // Set specific font for the line edit
+    QFont lineEditFont = ui->lineEdit_journalName->font();
+    lineEditFont.setPointSize(14);
+    lineEditFont.setItalic(false);
+    lineEditFont.setBold(false);
+    ui->lineEdit_journalName->setFont(lineEditFont);
+
     this->setWindowTitle(windowTitile);
 
     //获取程序运行信息
@@ -72,6 +91,10 @@ ShowJCR::ShowJCR(QWidget *parent)
     pCompleter->setFilterMode(Qt::MatchContains);    //部分内容匹配
     pCompleter->setCaseSensitivity(Qt::CaseInsensitive);    //设置为大小写不敏感
     ui->lineEdit_journalName->setCompleter(pCompleter);
+
+    // Set the font for the QCompleter's popup
+    QFont completerFont("Microsoft YaHei", 14);  // Set the desired font and size
+    pCompleter->popup()->setFont(completerFont);
 
     //使用默认期刊进行查询，设置界面初始默认显示
 //    run(defaultJournal);
@@ -131,7 +154,7 @@ void ShowJCR::run(const QString &input)
         return;
     }
     //检查输入是否在期刊数据库中，不区分大小写；如果输入为带'.'的缩写，删除'.'后重新检查
-    if(!sqliteDB->getAllJournalNames().contains(journalName, Qt::CaseInsensitive) and !sqliteDB->getAllJournalNames().contains(journalName.remove('.'), Qt::CaseInsensitive)){   //不区分大小写
+    if(!sqliteDB->getAllJournalNames().contains(journalName, Qt::CaseInsensitive) && !sqliteDB->getAllJournalNames().contains(journalName.remove('.'), Qt::CaseInsensitive)){   //不区分大小写
         if(!ui->lineEdit_journalName->text().contains(cueWords[1])){
             ui->lineEdit_journalName->setText(cueWords[1] + ui->lineEdit_journalName->text());
         }
@@ -173,10 +196,10 @@ void ShowJCR::setAutoStart()
     QString regPath = "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";//无需管理员权限，写入当前用户注册表
     QSettings reg(regPath, QSettings::NativeFormat);
     QString val = reg.value(appName).toString();// 如果此键不存在，则返回的是空字符串
-    if(val != autoStartValue & autoStart){
+    if(val != autoStartValue && autoStart){
         reg.setValue(appName,autoStartValue);
     }
-    else if(val == autoStartValue & !autoStart){//移除自启动
+    else if(val == autoStartValue && !autoStart){//移除自启动
         reg.remove(appName);
     }
 }
